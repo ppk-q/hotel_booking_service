@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
+    command: >
+      sh -c
+      "python hotel_booking_service/manage.py migrate &&
+       python hotel_booking_service/manage.py runserver 0.0.0.0:9000"
+    env_file:
+      - ../.env
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgres://postgres:postgres@db:5432/hotel}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ..:/app
+      - staticfiles:/app/staticfiles
+    ports:
+      - "9000:9000"
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-hotel}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
+  staticfiles:
