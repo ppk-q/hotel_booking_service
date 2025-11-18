@@ -10,6 +10,7 @@ COPY pyproject.toml poetry.lock /app/
 RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir poetry \
     && poetry config virtualenvs.create false \
+    # && poetry lock --no-interaction \
     && poetry install --no-root --no-interaction --no-ansi
 
 COPY hotel_booking_service /app/hotel_booking_service
