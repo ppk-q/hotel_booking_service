@@ -53,6 +53,7 @@ extend-select = [
   "ISC", "Q", "PTH", "T20",
   "RUF"
 ]
+ignore = ["RUF001", "RUF002"]
 
 fixable = ["ALL"]
 unfixable = []
